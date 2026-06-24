@@ -1,0 +1,13 @@
+{
+  "phase": "phase1",
+  "status": "not_started",
+  "iteration": 0,
+  "maxIterations": 6,
+  "maxBudgetUsd": 8,
+  "spentUsd": 0,
+  "lastFailureSignature": null,
+  "repeatFailureCount": 0,
+  "stopReason": null,
+  "requiresHumanApproval": false,
+  "lastUpdated": null
+}

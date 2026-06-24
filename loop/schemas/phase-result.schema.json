@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "verdict",
+    "stop_reason",
+    "summary",
+    "evidence",
+    "blocking_issues",
+    "phase_scope_violations",
+    "manual_verification_required",
+    "next_maker_instruction"
+  ],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "ESCALATE"]
+    },
+    "stop_reason": {
+      "type": ["string", "null"],
+      "enum": ["goal_met", "stalled", "needs_human", null]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "blocking_issues": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "phase_scope_violations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "manual_verification_required": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next_maker_instruction": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
