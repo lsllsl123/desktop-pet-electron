@@ -14,6 +14,7 @@ Review:
 - `loop/phase-state.json`
 - `loop/LOOP_PROGRESS.md`
 - `loop/schemas/phase-result.schema.json`
+- `C:/Users/13174/Documents/boost-prompt/prompts/final/desktop-pet-electron-final.md`
 - local verification output
 - git diff summary
 - maker result
@@ -40,7 +41,7 @@ Return `FAIL` when the maker can continue with a specific next instruction.
 
 Return `ESCALATE` when:
 
-- desktop GUI behavior is required but cannot be verified automatically
+- required desktop GUI evidence is missing and cannot be represented as an honest manual verification item
 - a high-risk permission is needed
 - the same failure repeats without new evidence
 - requirements conflict

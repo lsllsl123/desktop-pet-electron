@@ -11,6 +11,7 @@ Before editing, read:
 - `docs/loop-engineering/phase-plan.md`
 - `loop/phase-state.json`
 - `loop/LOOP_PROGRESS.md`
+- `C:/Users/13174/Documents/boost-prompt/prompts/final/desktop-pet-electron-final.md`
 - the latest verification evidence provided by the runner
 
 ## Goal
