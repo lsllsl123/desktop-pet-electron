@@ -110,39 +110,29 @@ function Invoke-ClaudeJson {
         [string]$JsonSchemaPath = $null
     )
 
-    $promptFile = New-TemporaryFile
-    try {
-        Set-Content -Path $promptFile -Value $Prompt -Encoding UTF8
+    $claudeArgs = @(
+        "-p",
+        "--output-format",
+        "json",
+        "--allowedTools",
+        $AllowedTools,
+        "--permission-mode",
+        $PermissionMode,
+        "--max-budget-usd",
+        [string]$BudgetUsd,
+        "--append-system-prompt",
+        $SystemPrompt
+    )
 
-        $claudeArgs = @(
-            "-p",
-            (Get-Content -Raw $promptFile.FullName),
-            "--output-format",
-            "json",
-            "--allowedTools",
-            $AllowedTools,
-            "--permission-mode",
-            $PermissionMode,
-            "--max-budget-usd",
-            [string]$BudgetUsd,
-            "--append-system-prompt",
-            $SystemPrompt
+    if (-not [string]::IsNullOrWhiteSpace($JsonSchemaPath)) {
+        $claudeArgs += @(
+            "--json-schema",
+            (Get-Content -Raw $JsonSchemaPath)
         )
-
-        if (-not [string]::IsNullOrWhiteSpace($JsonSchemaPath)) {
-            $claudeArgs += @(
-                "--json-schema",
-                (Get-Content -Raw $JsonSchemaPath)
-            )
-        }
-
-        $raw = & cmd /c claude @claudeArgs 2>&1
-        $exit = $LASTEXITCODE
-    } finally {
-        if (Test-Path $promptFile) {
-            Remove-Item $promptFile -Force
-        }
     }
+
+    $raw = $Prompt | & cmd /c claude @claudeArgs 2>&1
+    $exit = $LASTEXITCODE
 
     $text = ($raw -join "`n")
     if ($exit -ne 0) {
