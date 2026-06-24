@@ -37,3 +37,18 @@ Append-only progress log for the Claude Code CLI desktop pet loop.
 - Iteration: 3
 - Stop: needs_human
 - Summary: Claude Code CLI maker call was interrupted after several minutes with no maker raw output and no app files. Runner prompt transport had been fixed; next step should diagnose Claude CLI execution/permissions or run maker once interactively.
+
+## 2026-06-24T16:16:55.1266105+08:00
+- Phase: phase1
+- Note: Maker prompt narrowed to a first skeleton turn; continuing loop from iteration 4.
+
+## 2026-06-24T16:20:08.1449271+08:00
+- Phase: phase1
+- Iteration: 4
+- Stop: needs_human
+- Summary: Runner maker call hung again after verification-before. Operator will use a short direct Claude Code CLI maker prompt for the Phase 1 skeleton turn, then return to verification/checker flow.
+
+## 2026-06-24T16:25:09.9915053+08:00
+- Phase: phase1
+- Stop: needs_human
+- Summary: Direct Claude Code CLI maker attempts with short prompt also hung without writing app files. No partial app code was generated. Recommended next step: run an interactive Claude Code CLI session to observe tool-use blocking, or let Codex implement the skeleton and use Claude Code CLI only as checker.
