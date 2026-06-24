@@ -19,3 +19,11 @@ Append-only progress log for the Claude Code CLI desktop pet loop.
 ## 2026-06-24T15:47:09.1673175+08:00
 - Phase: phase2
 - DryRun: phase is not authorized yet; skipped state mutation and Claude calls.
+
+## Scaffolding Verification
+
+- Runner dry-run: PASS
+- Phase 2 block: PASS
+- Phase 1 verification before app code: expected FAIL with structured JSON
+- Electron app code generated: NO
+- Next allowed action: review scaffolding, then run Phase 1 maker loop only after approval
