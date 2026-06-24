@@ -18,6 +18,21 @@ Before editing, read:
 
 Make the smallest verifiable change toward Phase 1 MVP.
 
+If the repository does not yet contain an Electron app, first create only the
+minimum Phase 1 skeleton needed for `scripts/verify-phase1.ps1` to observe
+progress:
+
+- `package.json` with deterministic `test` and `build` scripts.
+- Electron main entry under `src/main.ts`.
+- React renderer entry under `src/App.tsx` or `src/renderer`.
+- Animation state machine module.
+- Explosion engine module.
+- Settings store module.
+- Focused tests for deterministic modules.
+
+Do not attempt to finish the whole MVP in one maker turn. Leave GUI polish and
+manual desktop verification for later turns.
+
 ## Allowed Phase 1 Scope
 
 - Electron project structure.

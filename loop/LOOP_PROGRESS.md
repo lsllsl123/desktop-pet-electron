@@ -27,3 +27,13 @@ Append-only progress log for the Claude Code CLI desktop pet loop.
 - Phase 1 verification before app code: expected FAIL with structured JSON
 - Electron app code generated: NO
 - Next allowed action: review scaffolding, then run Phase 1 maker loop only after approval
+
+## 2026-06-24T16:07:12.2843417+08:00
+- Phase: phase1
+- Note: Human/operator resolved runner prompt transport issue; continuing Phase 1 loop with existing iteration and reports.
+
+## 2026-06-24T16:13:26.5356853+08:00
+- Phase: phase1
+- Iteration: 3
+- Stop: needs_human
+- Summary: Claude Code CLI maker call was interrupted after several minutes with no maker raw output and no app files. Runner prompt transport had been fixed; next step should diagnose Claude CLI execution/permissions or run maker once interactively.
