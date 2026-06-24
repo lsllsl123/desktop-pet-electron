@@ -52,3 +52,26 @@ Append-only progress log for the Claude Code CLI desktop pet loop.
 - Phase: phase1
 - Stop: needs_human
 - Summary: Direct Claude Code CLI maker attempts with short prompt also hung without writing app files. No partial app code was generated. Recommended next step: run an interactive Claude Code CLI session to observe tool-use blocking, or let Codex implement the skeleton and use Claude Code CLI only as checker.
+
+## 2026-06-24 Direct Skeleton (no loop maker)
+- Phase: phase1
+- Status: in_progress
+- Files created: package.json, tsconfig.json, vite.config.ts, index.html, src/main.ts, src/preload.ts, src/renderer.tsx, src/App.tsx, src/shared/animationStateMachine.ts, src/shared/settingsStore.ts, src/renderer/explosionEngine.ts
+- Test files: animationStateMachine.test.ts, settingsStore.test.ts, explosionEngine.test.ts
+- Tests: 47 pass, 0 fail — all deterministic modules covered
+- Build: main/preload/renderer all compile cleanly
+- Notes: Uses animationStateMachine transition(), settingsStore, explosionEngine createExplosion/tickParticles in App.tsx. No Phase 2 features added.
+
+## 2026-06-24T16:57:50.2880363+08:00
+- Phase: phase1
+- Stop: goal_met
+- Summary: Automatic Phase 1 skeleton verification passed with 48 tests and successful build. Manual GUI verification remains required before Phase 2.
+
+## 2026-06-24 Checker Follow-up
+
+- Phase: phase1
+- Status: automatic verification passed
+- Tests: 51 pass, 0 fail
+- Build: PASS
+- Checker blockers resolved: added simple speech bubble and `loop/reports/phase-1-acceptance.md`
+- Remaining gate: manual GUI verification before Phase 2
