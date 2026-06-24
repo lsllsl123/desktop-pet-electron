@@ -18,6 +18,20 @@ $MakerPromptPath = Join-Path $Root "loop\prompts\maker-$Phase.md"
 $CheckerPromptPath = Join-Path $Root "loop\prompts\checker-$Phase.md"
 $ReportPath = Join-Path $Root "loop\reports\phase-1-acceptance.md"
 
+function Assert-RequiredFile {
+    param([string]$Path)
+    if (-not (Test-Path $Path)) {
+        throw "Required file missing: $Path"
+    }
+}
+
+Assert-RequiredFile $StatePath
+Assert-RequiredFile $ProgressPath
+Assert-RequiredFile $ContractPath
+Assert-RequiredFile $PhasePlanPath
+Assert-RequiredFile $MakerPromptPath
+Assert-RequiredFile $CheckerPromptPath
+
 function Read-JsonFile {
     param([string]$Path)
     return Get-Content -Raw $Path | ConvertFrom-Json
