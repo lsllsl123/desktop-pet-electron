@@ -11,3 +11,11 @@ Append-only progress log for the Claude Code CLI desktop pet loop.
 ## 2026-06-24T15:23:06.4891131+08:00
 - Phase: phase1
 - DryRun: runner loaded state and skipped Claude calls.
+
+## 2026-06-24T15:47:08.5806499+08:00
+- Phase: phase1
+- DryRun: runner loaded state and skipped Claude calls.
+
+## 2026-06-24T15:47:09.1673175+08:00
+- Phase: phase2
+- DryRun: phase is not authorized yet; skipped state mutation and Claude calls.

@@ -194,6 +194,19 @@ if (-not (Test-Path $StatePath)) {
 }
 
 $state = Read-JsonFile $StatePath
+
+if ($DryRun) {
+    if ($Phase -ne "phase1") {
+        Append-Progress "- Phase: $Phase`n- DryRun: phase is not authorized yet; skipped state mutation and Claude calls."
+        Write-Output "Phase $Phase requires human approval."
+        exit 1
+    }
+
+    Append-Progress "- Phase: $Phase`n- DryRun: runner loaded state and skipped Claude calls."
+    Write-Output "DryRun complete."
+    exit 0
+}
+
 $state.phase = $Phase
 $state.maxIterations = $MaxIterations
 $state.maxBudgetUsd = $MaxBudgetUsd
@@ -213,12 +226,6 @@ if ($Phase -ne "phase1") {
     Append-Progress "- Phase: $Phase`n- Stop: Phase is not authorized yet."
     Write-Output "Phase $Phase requires human approval."
     exit 1
-}
-
-if ($DryRun) {
-    Append-Progress "- Phase: $Phase`n- DryRun: runner loaded state and skipped Claude calls."
-    Write-Output "DryRun complete."
-    exit 0
 }
 
 while ($state.iteration -lt $MaxIterations -and $state.spentUsd -lt $MaxBudgetUsd) {
