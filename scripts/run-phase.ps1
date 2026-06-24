@@ -16,6 +16,8 @@ $ContractPath = Join-Path $Root "docs\loop-engineering\loop-contract.md"
 $PhasePlanPath = Join-Path $Root "docs\loop-engineering\phase-plan.md"
 $MakerPromptPath = Join-Path $Root "loop\prompts\maker-$Phase.md"
 $CheckerPromptPath = Join-Path $Root "loop\prompts\checker-$Phase.md"
+$SchemaPath = Join-Path $Root "loop\schemas\phase-result.schema.json"
+$ReportsDir = Join-Path $Root "loop\reports"
 $ReportPath = Join-Path $Root "loop\reports\phase-1-acceptance.md"
 
 function Assert-RequiredFile {
@@ -31,6 +33,7 @@ Assert-RequiredFile $ContractPath
 Assert-RequiredFile $PhasePlanPath
 Assert-RequiredFile $MakerPromptPath
 Assert-RequiredFile $CheckerPromptPath
+Assert-RequiredFile $SchemaPath
 
 function Read-JsonFile {
     param([string]$Path)
@@ -52,6 +55,17 @@ function Append-Progress {
     Add-Content -Path $ProgressPath -Value $Text
 }
 
+function Write-LoopReport {
+    param(
+        [string]$Name,
+        [string]$Content
+    )
+    if (-not (Test-Path $ReportsDir)) {
+        New-Item -ItemType Directory -Force -Path $ReportsDir | Out-Null
+    }
+    Set-Content -Path (Join-Path $ReportsDir $Name) -Value $Content -Encoding UTF8
+}
+
 function Get-FailureSignature {
     param([string]$Text)
     if ([string]::IsNullOrWhiteSpace($Text)) {
@@ -64,13 +78,36 @@ function Get-FailureSignature {
     return $normalized
 }
 
+function ConvertFrom-JsonObjectText {
+    param([string]$Text)
+
+    try {
+        return $Text | ConvertFrom-Json
+    } catch {
+        $candidate = $Text
+    }
+
+    if ($candidate -match '(?s)```(?:json)?\s*(\{.*?\})\s*```') {
+        return $Matches[1] | ConvertFrom-Json
+    }
+
+    $start = $candidate.IndexOf("{")
+    $end = $candidate.LastIndexOf("}")
+    if ($start -ge 0 -and $end -gt $start) {
+        return $candidate.Substring($start, $end - $start + 1) | ConvertFrom-Json
+    }
+
+    throw "No parseable JSON object found."
+}
+
 function Invoke-ClaudeJson {
     param(
         [string]$Prompt,
         [string]$SystemPrompt,
         [string]$AllowedTools,
         [string]$PermissionMode,
-        [double]$BudgetUsd
+        [double]$BudgetUsd,
+        [string]$JsonSchemaPath = $null
     )
 
     $promptFile = New-TemporaryFile
@@ -92,6 +129,13 @@ function Invoke-ClaudeJson {
             $SystemPrompt
         )
 
+        if (-not [string]::IsNullOrWhiteSpace($JsonSchemaPath)) {
+            $claudeArgs += @(
+                "--json-schema",
+                (Get-Content -Raw $JsonSchemaPath)
+            )
+        }
+
         $raw = & cmd /c claude @claudeArgs 2>&1
         $exit = $LASTEXITCODE
     } finally {
@@ -111,7 +155,7 @@ function Invoke-ClaudeJson {
     }
 
     try {
-        $json = $text | ConvertFrom-Json
+        $json = ConvertFrom-JsonObjectText $text
         return [pscustomobject]@{
             ok = $true
             cost = [double]($json.total_cost_usd)
@@ -169,7 +213,7 @@ function New-CheckerPrompt {
         [string]$VerificationOutput
     )
     return @"
-Read these files and return only JSON matching loop/schemas/phase-result.schema.json:
+Read these files and return only one raw JSON object matching loop/schemas/phase-result.schema.json. Do not wrap the JSON in Markdown fences and do not add commentary:
 
 $ContractPath
 $PhasePlanPath
@@ -235,6 +279,9 @@ while ($state.iteration -lt $MaxIterations -and $state.spentUsd -lt $MaxBudgetUs
     Write-JsonFile $StatePath $state
 
     $verificationBefore = Invoke-Verification
+    $iterationPrefix = "$Phase-iteration-$($state.iteration)"
+    Write-LoopReport "$iterationPrefix-verification-before.json" $verificationBefore.output
+
     $makerPrompt = New-MakerPrompt $state $verificationBefore.output
     $maker = Invoke-ClaudeJson `
         -Prompt $makerPrompt `
@@ -244,21 +291,26 @@ while ($state.iteration -lt $MaxIterations -and $state.spentUsd -lt $MaxBudgetUs
         -BudgetUsd 2
 
     $state.spentUsd = [double]$state.spentUsd + [double]$maker.cost
+    Write-LoopReport "$iterationPrefix-maker-raw.json" $maker.raw
     Write-JsonFile $StatePath $state
 
     $verificationAfter = Invoke-Verification
+    Write-LoopReport "$iterationPrefix-verification-after.json" $verificationAfter.output
+
     $checkerPrompt = New-CheckerPrompt $state $maker.result $verificationAfter.output
     $checker = Invoke-ClaudeJson `
         -Prompt $checkerPrompt `
         -SystemPrompt "You are the checker. Default to reject unless evidence proves the phase goal." `
         -AllowedTools "Read,Bash" `
         -PermissionMode "plan" `
-        -BudgetUsd 1
+        -BudgetUsd 1 `
+        -JsonSchemaPath $SchemaPath
 
     $state.spentUsd = [double]$state.spentUsd + [double]$checker.cost
+    Write-LoopReport "$iterationPrefix-checker-raw.json" $checker.raw
 
     try {
-        $verdict = $checker.result | ConvertFrom-Json
+        $verdict = ConvertFrom-JsonObjectText $checker.result
     } catch {
         $verdict = [pscustomobject]@{
             verdict = "ESCALATE"
