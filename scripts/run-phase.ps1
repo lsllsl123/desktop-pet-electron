@@ -60,12 +60,31 @@ function Invoke-ClaudeJson {
     )
 
     $promptFile = New-TemporaryFile
-    Set-Content -Path $promptFile -Value $Prompt -Encoding UTF8
+    try {
+        Set-Content -Path $promptFile -Value $Prompt -Encoding UTF8
 
-    $command = 'claude -p "' + (Get-Content -Raw $promptFile.FullName).Replace('"','\"') + '" --output-format json --allowedTools "' + $AllowedTools + '" --permission-mode ' + $PermissionMode + ' --max-budget-usd ' + $BudgetUsd + ' --append-system-prompt "' + $SystemPrompt.Replace('"','\"') + '"'
-    $raw = & cmd /c $command 2>&1
-    $exit = $LASTEXITCODE
-    Remove-Item $promptFile -Force
+        $claudeArgs = @(
+            "-p",
+            (Get-Content -Raw $promptFile.FullName),
+            "--output-format",
+            "json",
+            "--allowedTools",
+            $AllowedTools,
+            "--permission-mode",
+            $PermissionMode,
+            "--max-budget-usd",
+            [string]$BudgetUsd,
+            "--append-system-prompt",
+            $SystemPrompt
+        )
+
+        $raw = & cmd /c claude @claudeArgs 2>&1
+        $exit = $LASTEXITCODE
+    } finally {
+        if (Test-Path $promptFile) {
+            Remove-Item $promptFile -Force
+        }
+    }
 
     $text = ($raw -join "`n")
     if ($exit -ne 0) {
