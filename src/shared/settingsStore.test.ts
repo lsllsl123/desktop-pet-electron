@@ -28,6 +28,10 @@ void describe('SettingsStore', () => {
     assert.strictEqual(store.get('windowY'), null)
   })
 
+  void it('returns default soundPackId of blip', () => {
+    assert.strictEqual(store.get('soundPackId'), 'blip')
+  })
+
   void it('set and get a value', () => {
     store.set('charIndex', 3)
     assert.strictEqual(store.get('charIndex'), 3)
@@ -58,13 +62,14 @@ void describe('SettingsStore', () => {
     assert.strictEqual(store.get('charIndex'), 0)
     assert.strictEqual(store.get('windowX'), null)
     assert.strictEqual(store.get('windowY'), null)
+    assert.strictEqual(store.get('soundPackId'), 'blip')
   })
 
   void it('returns full settings snapshot via getAll', () => {
     store.set('charIndex', 1)
     store.set('windowX', 200)
     const all = store.getAll()
-    assert.deepStrictEqual(all, { charIndex: 1, windowX: 200, windowY: null })
+    assert.deepStrictEqual(all, { charIndex: 1, windowX: 200, windowY: null, soundPackId: 'blip' })
   })
 
   void it('handles corrupted JSON gracefully', () => {

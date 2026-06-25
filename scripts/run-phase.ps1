@@ -1,5 +1,5 @@
 param(
-    [ValidateSet("phase1","phase2","phase3")]
+    [ValidateSet("phase1","phase2","phase2-deferred1","phase2-deferred2","phase2-deferred3","phase2-deferred4","phase2-deferred5","phase3","phase3-deferred2","phase3-deferred3","phase3-deferred4")]
     [string]$Phase = "phase1",
     [int]$MaxIterations = 6,
     [double]$MaxBudgetUsd = 8,
@@ -18,7 +18,7 @@ $MakerPromptPath = Join-Path $Root "loop\prompts\maker-$Phase.md"
 $CheckerPromptPath = Join-Path $Root "loop\prompts\checker-$Phase.md"
 $SchemaPath = Join-Path $Root "loop\schemas\phase-result.schema.json"
 $ReportsDir = Join-Path $Root "loop\reports"
-$ReportPath = Join-Path $Root "loop\reports\phase-1-acceptance.md"
+$ReportPath = Join-Path $Root ("loop\reports\" + ($Phase -replace "phase", "phase-") + "-acceptance.md")
 
 function Assert-RequiredFile {
     param([string]$Path)
@@ -163,14 +163,15 @@ function Invoke-ClaudeJson {
 }
 
 function Invoke-Verification {
-    if ($Phase -ne "phase1") {
+    $scriptPath = "scripts\verify-$Phase.ps1"
+    if (-not (Test-Path $scriptPath)) {
         return [pscustomobject]@{
             exitCode = 1
-            output = '{"passed":false,"checks":[{"name":"phase authorization","passed":false,"details":"Only phase1 is authorized."}]}'
+            output = '{"passed":false,"checks":[{"name":"phase verifier","passed":false,"details":"Verifier script is missing."}]}'
         }
     }
 
-    $output = & powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\verify-phase1.ps1" 2>&1
+    $output = & powershell -NoProfile -ExecutionPolicy Bypass -File $scriptPath 2>&1
     return [pscustomobject]@{
         exitCode = $LASTEXITCODE
         output = ($output -join "`n")
@@ -192,7 +193,7 @@ Latest verification output:
 
 $VerificationOutput
 
-Implement the smallest verifiable Phase 1 change. Do not implement Phase 2.
+Implement the smallest verifiable $Phase change. Stay inside the current phase plan.
 "@
 }
 
@@ -228,9 +229,10 @@ if (-not (Test-Path $StatePath)) {
 }
 
 $state = Read-JsonFile $StatePath
+$previousPhase = [string]$state.phase
 
 if ($DryRun) {
-    if ($Phase -ne "phase1") {
+    if ($Phase -eq "phase3") {
         Append-Progress "- Phase: $Phase`n- DryRun: phase is not authorized yet; skipped state mutation and Claude calls."
         Write-Output "Phase $Phase requires human approval."
         exit 1
@@ -241,6 +243,136 @@ if ($DryRun) {
     exit 0
 }
 
+if ($Phase -eq "phase2" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-1-acceptance.md"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 1 acceptance report is missing."
+    Write-Output "Phase 2 requires Phase 1 acceptance report."
+    exit 1
+}
+
+if ($Phase -eq "phase2-deferred1" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-2-acceptance.md"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 2 foundation acceptance report is missing."
+    Write-Output "Phase 2 deferred slice 1 requires Phase 2 foundation acceptance report."
+    exit 1
+}
+
+if ($Phase -eq "phase2-deferred2" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-2-deferred1-acceptance.md"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 2 deferred slice 1 acceptance report is missing."
+    Write-Output "Phase 2 deferred slice 2 requires Phase 2 deferred slice 1 acceptance report."
+    exit 1
+}
+
+if ($Phase -eq "phase2-deferred3" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-2-deferred2-acceptance.md"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 2 deferred slice 2 acceptance report is missing."
+    Write-Output "Phase 2 deferred slice 3 requires Phase 2 deferred slice 2 acceptance report."
+    exit 1
+}
+
+if ($Phase -eq "phase2-deferred4" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-2-deferred3-acceptance.md"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 2 deferred slice 3 acceptance report is missing."
+    Write-Output "Phase 2 deferred slice 4 requires Phase 2 deferred slice 3 acceptance report."
+    exit 1
+}
+
+if ($Phase -eq "phase2-deferred5" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-2-deferred4-acceptance.md"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 2 deferred slice 4 acceptance report is missing."
+    Write-Output "Phase 2 deferred slice 5 requires Phase 2 deferred slice 4 acceptance report."
+    exit 1
+}
+
+if ($Phase -eq "phase3" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-2-deferred5-checker.json"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 2 deferred slice 5 checker report is missing."
+    Write-Output "Phase 3 requires Phase 2 deferred slice 5 checker report."
+    exit 1
+}
+
+if ($Phase -eq "phase3-deferred2" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-3-checker.json"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 3 slice 1 checker report is missing."
+    Write-Output "Phase 3 deferred slice 2 requires Phase 3 slice 1 checker report."
+    exit 1
+}
+
+if ($Phase -eq "phase3-deferred3" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-3-deferred2-checker.json"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 3 deferred slice 2 checker report is missing."
+    Write-Output "Phase 3 deferred slice 3 requires Phase 3 deferred slice 2 checker report."
+    exit 1
+}
+
+if ($Phase -eq "phase3-deferred4" -and -not (Test-Path (Join-Path $Root "loop\reports\phase-3-deferred3-checker.json"))) {
+    $state.phase = $Phase
+    $state.status = "needs_human"
+    $state.stopReason = "needs_human"
+    $state.requiresHumanApproval = $true
+    $state.lastUpdated = (Get-Date).ToString("o")
+    Write-JsonFile $StatePath $state
+    Append-Progress "- Phase: $Phase`n- Stop: Phase 3 deferred slice 3 checker report is missing."
+    Write-Output "Phase 3 deferred slice 4 requires Phase 3 deferred slice 3 checker report."
+    exit 1
+}
+
+if ($state.status -eq "goal_met" -and $previousPhase -ne $Phase) {
+    $state.status = "not_started"
+    $state.iteration = 0
+    $state.spentUsd = 0
+    $state.lastFailureSignature = $null
+    $state.repeatFailureCount = 0
+    $state.stopReason = $null
+    $state.requiresHumanApproval = $false
+}
+
 $state.phase = $Phase
 $state.maxIterations = $MaxIterations
 $state.maxBudgetUsd = $MaxBudgetUsd
@@ -249,17 +381,6 @@ if ($state.status -eq "goal_met") {
     Append-Progress "- Phase: $Phase`n- Stop: already goal_met"
     Write-Output "Phase $Phase already goal_met."
     exit 0
-}
-
-if ($Phase -ne "phase1") {
-    $state.status = "needs_human"
-    $state.stopReason = "needs_human"
-    $state.requiresHumanApproval = $true
-    $state.lastUpdated = (Get-Date).ToString("o")
-    Write-JsonFile $StatePath $state
-    Append-Progress "- Phase: $Phase`n- Stop: Phase is not authorized yet."
-    Write-Output "Phase $Phase requires human approval."
-    exit 1
 }
 
 while ($state.iteration -lt $MaxIterations -and $state.spentUsd -lt $MaxBudgetUsd) {
@@ -331,7 +452,7 @@ while ($state.iteration -lt $MaxIterations -and $state.spentUsd -lt $MaxBudgetUs
         Write-JsonFile $StatePath $state
 
         Set-Content -Path $ReportPath -Encoding UTF8 -Value @"
-# Phase 1 Acceptance Report
+# $Phase Acceptance Report
 
 - Status: goal_met
 - Generated: $($state.lastUpdated)

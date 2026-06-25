@@ -32,12 +32,14 @@ export interface PetSettings {
   charIndex: number
   windowX: number | null
   windowY: number | null
+  soundPackId: string
 }
 
 const DEFAULT_SETTINGS: PetSettings = {
   charIndex: 0,
   windowX: null,
   windowY: null,
+  soundPackId: 'blip',
 }
 
 const STORAGE_KEY = 'desktop-pet-settings'

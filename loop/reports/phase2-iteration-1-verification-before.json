@@ -1,0 +1,68 @@
+﻿{
+    "phase":  "phase2",
+    "passed":  false,
+    "generatedAt":  "2026-06-24T17:29:00.9387974+08:00",
+    "checks":  [
+                   {
+                       "name":  "phase 1 verifier exists",
+                       "passed":  true,
+                       "details":  "Phase 2 builds on the accepted Phase 1 verifier."
+                   },
+                   {
+                       "name":  "random event scheduler module exists",
+                       "passed":  false,
+                       "details":  "Expected deterministic low-frequency random event scheduler."
+                   },
+                   {
+                       "name":  "hidden mood module exists",
+                       "passed":  false,
+                       "details":  "Expected hidden mood system module."
+                   },
+                   {
+                       "name":  "behavior settings module exists",
+                       "passed":  false,
+                       "details":  "Expected low-resource/random-event behavior settings module."
+                   },
+                   {
+                       "name":  "phase 2 acceptance report exists",
+                       "passed":  false,
+                       "details":  "Phase 2 must write an acceptance report."
+                   },
+                   {
+                       "name":  "deferred feature absent: src\\shared\\todoStore.ts",
+                       "passed":  true,
+                       "details":  "This first Phase 2 loop must not implement deferred Phase 2 features."
+                   },
+                   {
+                       "name":  "deferred feature absent: src\\shared\\imagePixelator.ts",
+                       "passed":  true,
+                       "details":  "This first Phase 2 loop must not implement deferred Phase 2 features."
+                   },
+                   {
+                       "name":  "deferred feature absent: src\\shared\\customCharacterManager.ts",
+                       "passed":  true,
+                       "details":  "This first Phase 2 loop must not implement deferred Phase 2 features."
+                   },
+                   {
+                       "name":  "deferred feature absent: src\\shared\\startupLaunch.ts",
+                       "passed":  true,
+                       "details":  "This first Phase 2 loop must not implement deferred Phase 2 features."
+                   },
+                   {
+                       "name":  "npm test",
+                       "passed":  true,
+                       "details":  "\n\u003e desktop-pet@0.1.0 test\n\u003e node --import tsx --test \"src/**/*.test.ts\" --runInBand\n\n▶ explosionEngine\n  ▶ createExplosion\n    ✔ creates the requested number of particles (1.2802ms)\n    ✔ positions all particles at center initially (0.3452ms)\n    ✔ sets deterministic velocities from index (0.3571ms)\n    ✔ assigns each particle the correct lifetime (0.3083ms)\n    ✔ uses default config when no arguments given (0.2012ms)\n    ✔ particles have deterministic colors within hue range (0.2656ms)\n  ✔ createExplosion (3.9672ms)\n  ▶ tickParticles\n    ✔ advances particle positions by velocity (0.3835ms)\n    ✔ removes dead particles (0.1563ms)\n    ✔ applies gravity to vy (0.2065ms)\n    ✔ is immutable — does not mutate input (1.11ms)\n    ✔ produces identical output for identical input (0.2533ms)\n  ✔ tickParticles (2.477ms)\n✔ explosionEngine (6.9901ms)\n▶ animationStateMachine\n  ▶ canTransition\n    ✔ idle → clicked = true (1.6371ms)\n    ✔ idle → exploding = true (0.3349ms)\n    ✔ idle → dragging = false (0.1282ms)\n    ✔ idle → dragRecover = false (0.2014ms)\n    ✔ idle → idle = false (0.1262ms)\n    ✔ clicked → dragging = true (0.1287ms)\n    ✔ clicked → idle = true (0.1212ms)\n    ✔ clicked → exploding = true (0.1163ms)\n    ✔ clicked → clicked = false (0.2543ms)\n    ✔ clicked → dragRecover = false (0.3562ms)\n    ✔ dragging → dragRecover = true (0.2362ms)\n    ✔ dragging → exploding = true (0.1041ms)\n    ✔ dragging → idle = false (0.0791ms)\n    ✔ dragging → clicked = false (0.3083ms)\n    ✔ dragRecover → idle = true (0.1348ms)\n    ✔ dragRecover → exploding = true (0.0545ms)\n    ✔ dragRecover → clicked = false (0.0649ms)\n    ✔ dragRecover → dragging = false (0.0331ms)\n    ✔ exploding → idle = true (0.049ms)\n    ✔ exploding → clicked = false (0.0429ms)\n    ✔ exploding → dragging = false (0.0597ms)\n    ✔ exploding → dragRecover = false (0.0505ms)\n  ✔ canTransition (6.6862ms)\n  ▶ transition\n    ✔ returns next state when valid (0.2209ms)\n    ✔ returns current state when invalid (0.1271ms)\n    ✔ returns current state for unknown target (0.1156ms)\n    ✔ exploding can only transition to idle (0.1339ms)\n  ✔ transition (0.8464ms)\n  ▶ stateLabel\n    ✔ returns a label for every defined state (0.4581ms)\n  ✔ stateLabel (0.5983ms)\n✔ animationStateMachine (8.9873ms)\n▶ SettingsStore\n  ✔ returns default charIndex of 0 (1.5944ms)\n  ✔ returns default windowX of null (0.3195ms)\n  ✔ returns default windowY of null (0.232ms)\n  ✔ set and get a value (0.66ms)\n  ✔ persists to backend after set (0.9081ms)\n  ✔ loads persisted data from backend (0.524ms)\n  ✔ resets all values to defaults (0.3109ms)\n  ✔ returns full settings snapshot via getAll (2.2301ms)\n  ✔ handles corrupted JSON gracefully (1.6833ms)\n  ✔ uses a working in-memory backend when no backend is supplied (0.7064ms)\n✔ SettingsStore (11.7597ms)\n▶ speechBubble\n  ✔ creates a visible bubble with deterministic expiry (3.9741ms)\n  ✔ dismisses expired bubbles (0.3502ms)\n  ✔ keeps unexpired bubbles (0.2147ms)\n✔ speechBubble (6.26ms)\nℹ tests 51\nℹ suites 9\nℹ pass 51\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 384.3582"
+                   },
+                   {
+                       "name":  "npm run build",
+                       "passed":  true,
+                       "details":  "\n\u003e desktop-pet@0.1.0 build\n\u003e vite build\n\nvite v6.4.3 building for production...\ntransforming...\n✓ 30 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/renderer/index.html                  0.32 kB │ gzip:  0.24 kB\ndist/renderer/assets/index-CQvPHa6o.js  148.45 kB │ gzip: 48.28 kB\n✓ built in 1.09s\nvite v6.4.3 building for production...\ntransforming...\n✓ 1 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/main/main.js  1.63 kB │ gzip: 0.88 kB\n✓ built in 34ms\nvite v6.4.3 building for production...\ntransforming...\n✓ 1 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/preload/preload.js  0.35 kB │ gzip: 0.22 kB\n✓ built in 20ms"
+                   }
+               ],
+    "manualVerificationRequired":  [
+                                       "Random event bubbles appear only at low frequency",
+                                       "Random events do not interrupt dragging or exploding",
+                                       "Hidden mood is not shown as raw numeric UI",
+                                       "Low-resource mode visibly reduces optional behavior"
+                                   ]
+}

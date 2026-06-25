@@ -21,10 +21,16 @@ function Invoke-CommandCapture {
         [Parameter(Mandatory=$true)][string]$Command
     )
 
-    $output = & cmd /c $Command 2>&1
-    return [pscustomobject]@{
-        exitCode = $LASTEXITCODE
-        output = ($output -join "`n")
+    $previousPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = & cmd /c $Command 2>&1 | ForEach-Object { $_.ToString() }
+        return [pscustomobject]@{
+            exitCode = $LASTEXITCODE
+            output = ($output -join "`n")
+        }
+    } finally {
+        $ErrorActionPreference = $previousPreference
     }
 }
 
